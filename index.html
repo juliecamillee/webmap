@@ -1,0 +1,119 @@
+<!doctype html>
+
+<html lang="en">
+<head> 
+  <meta charset="utf-8">
+
+  <title>Cammie's Map</title>
+  <meta name="description" content="My Map">
+  <meta name="author" content="SitePoint">
+
+  <!--[if lt IE 9]>
+  <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+
+	<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.css">
+	</link>
+	<style type="text/css">
+	    body {
+	    	font-family: sans-serif;
+	    	color: black;
+	    	text-align: center;
+	    	size: 12px;
+	    }
+
+	    h1 {
+	    	font-family: sans-serif;
+	    	color: black;
+	    	text-align: center;
+	    	size: 20px;
+	    }
+
+	    #myMap {
+	    	width: 98%;
+	    	height: 600px;
+	    	background-color: white;
+	    	position: absolute;
+	    	border: 2px solid black;
+	    }
+
+		.info {
+		    padding: 6px 8px;
+		    font: 14px/16px Arial, Helvetica, sans-serif;
+		    background: white;
+		    background: rgba(255,255,255,0.8);
+		    box-shadow: 0 0 15px rgba(0,0,0,0.2);
+		    border-radius: 5px;
+}
+		.info h4 {
+		    margin: 0 0 5px;
+		    color: #777;
+}
+
+	</style>
+
+</head>
+
+<body>
+
+	<h1>New York City Census Tracts</h1>
+	<div id="myMap" class="map"></div>
+
+  	<script src="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.js"></script>
+  	<script src="https://code.jquery.com/jquery-2.2.0.min.js"></script>
+  	<script type="text/javascript">
+
+  var basemapUrl = 'http://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png';
+  var attribution = '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="http://cartodb.com/attributions">CartoDB</a>';
+
+	var myMap = L.map('myMap', {
+		scrollWheelZoom: false
+	}).setView( [40.721762,-74.000473], 10);
+	
+  	L.tileLayer(basemapUrl,{
+    attribution: attribution
+ 	 }).addTo(myMap);
+
+  $.getJSON('data/nyctracts.geojson', function(nabe_data) {
+    L.geoJson(nabe_data).addTo(myMap);
+  });
+
+function highlightFeature(e) {
+    var layer = e.target;
+
+    layer.setStyle({
+        weight: 5,
+        color: '#666',
+        dashArray: '',
+        fillOpacity: 0.7
+    });
+
+    if (!L.Browser.ie && !L.Browser.opera) {
+        layer.bringToFront();
+    }
+}
+
+function resetHighlight(e) {
+    geojson.resetStyle(e.target);
+}
+
+function zoomToFeature(e) {
+    map.fitBounds(e.target.getBounds());
+}
+
+function onEachFeature(feature, layer) {
+    layer.on({
+        mouseover: highlightFeature,
+        mouseout: resetHighlight,
+        click: zoomToFeature
+    });
+}
+
+geojson = L.geoJson(data/nyctracts, {
+    style: style,
+    onEachFeature: onEachFeature
+}).addTo(Mymap);
+
+	</script>
+</body>
+</html>
